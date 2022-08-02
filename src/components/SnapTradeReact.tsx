@@ -46,7 +46,6 @@ export const SnapTradeReact: React.FC<PropsType> = ({
           src={loginLink}
           title="SnapTrade Connection Portal - React"
           style={{
-            // position: 'relative',
             inset: '0px',
             zIndex: '1000',
             borderWidth: '0px',
@@ -56,7 +55,6 @@ export const SnapTradeReact: React.FC<PropsType> = ({
           height="1000vh"
           width="100%"
           allowFullScreen
-          // frameBorder="0"
         ></iframe>
       </Dialog>
     </div>
