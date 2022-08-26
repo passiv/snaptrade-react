@@ -15,7 +15,8 @@ jobs:
         with:
           node-version: '17'
       - name: yarn install, test and build
-        run: yarn
+        run: |
+          yarn
           yarn test --coverage
           yarn build
       - name: Upload coverage to Codecov
