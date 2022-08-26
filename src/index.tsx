@@ -68,6 +68,7 @@ export const SnapTradeReact: React.FC<PropsType> = ({
               cursor: 'pointer',
               marginBottom: '20px',
             }}
+            data-testid="closeBtn"
           >
             <span aria-hidden>×</span>
           </button>

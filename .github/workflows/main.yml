@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+  workflow_dispatch:
+jobs:
+  job_one:
+    runs-on: ubuntu-latest
+    name: run tests
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          node-version: '17'
+      - name: yarn install, test and build
+        run: yarn
+          yarn test --coverage
+          yarn build
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
