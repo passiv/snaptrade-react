@@ -17,5 +17,5 @@ jobs:
         run: |
           yarn
           yarn run test a --runInBand --coverage
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.0
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v3.1.0
