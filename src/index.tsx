@@ -1,10 +1,14 @@
+import { useRef } from 'react';
 import ReactModal from 'react-modal';
 
 type PropsType = {
   loginLink: string;
   isOpen: boolean;
-  closeBtn?: boolean;
   close: () => void;
+  onSuccess?: () => void;
+  onError?: (error: string) => void;
+  onExit?: () => void;
+  closeBtn?: boolean;
   contentLabel?: string;
   style?: {
     overlay?: {
@@ -25,11 +29,49 @@ type PropsType = {
 export const SnapTradeReact: React.FC<PropsType> = ({
   loginLink,
   isOpen,
-  closeBtn = true,
   close,
+  onSuccess,
+  onError,
+  onExit,
+  closeBtn = true,
   contentLabel = 'SnapTrade Connection Portal rendering in an iframe',
   style,
 }) => {
+  const iframeRef = useRef(null);
+
+  const getTimeStampInSeconds = () => Math.floor(Date.now() / 1000).toString();
+
+  window.addEventListener(
+    'message',
+    function (e) {
+      if (e.data === 'SUCCESS' && onSuccess) {
+        onSuccess();
+        localStorage.setItem('timestamp', getTimeStampInSeconds());
+      }
+      if (e.data.includes('ERROR') && onError) {
+        onError(e.data.split(':')[1]);
+        localStorage.setItem('timestamp', getTimeStampInSeconds());
+      }
+      if (e.data === 'CLOSED' && onExit) {
+        if (localStorage.getItem('timestamp')) {
+          const diffTimeStamp =
+            Number(getTimeStampInSeconds()) -
+            Number(localStorage.getItem('timestamp'));
+          console.log('diffTimeStamp', diffTimeStamp);
+
+          if (diffTimeStamp > 5) {
+            onExit();
+            localStorage.setItem('timestamp', getTimeStampInSeconds());
+          }
+        } else {
+          onExit();
+          localStorage.setItem('timestamp', getTimeStampInSeconds());
+        }
+      }
+    },
+    false
+  );
+
   return (
     <div>
       <ReactModal
@@ -77,6 +119,7 @@ export const SnapTradeReact: React.FC<PropsType> = ({
         <iframe
           id="snaptrade-react-connection-portal"
           src={loginLink}
+          ref={iframeRef}
           title="SnapTrade Connection Portal - React"
           style={{
             inset: '0px',

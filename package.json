@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "test": "jest --watch --coverage",
-    "build": "parcel build",
+    "build": "parcel build --no-cache",
     "version": "git add -A src",
     "postversion": "git push && git push --tags"
   },
