@@ -44,28 +44,30 @@ export const SnapTradeReact: React.FC<PropsType> = ({
   window.addEventListener(
     'message',
     function (e) {
-      if (e.data === 'SUCCESS' && onSuccess) {
-        onSuccess();
-        localStorage.setItem('timestamp', getTimeStampInSeconds());
-      }
-      if (e.data.includes('ERROR') && onError) {
-        onError(e.data.split(':')[1]);
-        localStorage.setItem('timestamp', getTimeStampInSeconds());
-      }
-      if (e.data === 'CLOSED' && onExit) {
-        if (localStorage.getItem('timestamp')) {
-          const diffTimeStamp =
-            Number(getTimeStampInSeconds()) -
-            Number(localStorage.getItem('timestamp'));
-          console.log('diffTimeStamp', diffTimeStamp);
+      if (typeof e.data === 'string') {
+        if (e.data === 'SUCCESS' && onSuccess && onError) {
+          onSuccess();
+          localStorage.setItem('timestamp', getTimeStampInSeconds());
+        }
+        if (e.data.includes('ERROR') && onError) {
+          onError(e.data.split(':')[1]);
+          localStorage.setItem('timestamp', getTimeStampInSeconds());
+        }
+        if (e.data === 'CLOSED' && onExit) {
+          if (localStorage.getItem('timestamp')) {
+            const diffTimeStamp =
+              Number(getTimeStampInSeconds()) -
+              Number(localStorage.getItem('timestamp'));
+            console.log('diffTimeStamp', diffTimeStamp);
 
-          if (diffTimeStamp > 5) {
+            if (diffTimeStamp > 5) {
+              onExit();
+              localStorage.setItem('timestamp', getTimeStampInSeconds());
+            }
+          } else {
             onExit();
             localStorage.setItem('timestamp', getTimeStampInSeconds());
           }
-        } else {
-          onExit();
-          localStorage.setItem('timestamp', getTimeStampInSeconds());
         }
       }
     },
