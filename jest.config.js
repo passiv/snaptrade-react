@@ -8,9 +8,9 @@ module.exports = {
   collectCoverageFrom: ['**/src/**/*.tsx'],
   coverageThreshold: {
     global: {
-      statements: 100,
-      functions: 100,
-      lines: 100,
+      statements: 50,
+      functions: 50,
+      lines: 50,
     },
   },
 };

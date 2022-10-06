@@ -12,17 +12,17 @@ test('renders modal based on passed in props', () => {
   render(<SnapTradeReact {...props} />, {});
 
   expect(screen.getByRole('dialog'));
-  expect(
-    screen.getByLabelText('SnapTrade Connection Portal rendering in an iframe')
+  expect(screen.getByLabelText('Connect Account via SnapTrade'));
+
+  expect(screen.getByTitle(/Connect Account via SnapTrade/i)).toHaveProperty(
+    'id',
+    'snaptrade-react-connection-portal'
   );
 
-  expect(
-    screen.getByTitle(/snapTrade connection portal - react/i)
-  ).toHaveProperty('id', 'snaptrade-react-connection-portal');
-
-  expect(
-    screen.getByTitle(/snapTrade connection portal - react/i)
-  ).toHaveProperty('src', props.loginLink);
+  expect(screen.getByTitle(/Connect Account via SnapTrade/i)).toHaveProperty(
+    'src',
+    props.loginLink
+  );
 
   expect(screen.getByTestId(/closeBtn/i)).toBeTruthy();
 });

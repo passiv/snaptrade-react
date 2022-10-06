@@ -1,5 +1,6 @@
-import { useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import ReactModal from 'react-modal';
+import { isMobile } from 'react-device-detect';
 
 type PropsType = {
   loginLink: string;
@@ -14,17 +15,22 @@ type PropsType = {
     overlay?: {
       backgroundColor?: string;
       width?: string;
+      height?: string;
+      zIndex?: number;
     };
     content?: {
       backgroundColor?: string;
       margin?: string;
       width?: string;
+      height?: string;
       padding?: string;
       borderRadius?: string;
       border?: string;
     };
   };
 };
+
+const getTimeStampInSeconds = () => Math.floor(Date.now() / 1000).toString();
 
 export const SnapTradeReact: React.FC<PropsType> = ({
   loginLink,
@@ -34,45 +40,62 @@ export const SnapTradeReact: React.FC<PropsType> = ({
   onError,
   onExit,
   closeBtn = true,
-  contentLabel = 'SnapTrade Connection Portal rendering in an iframe',
+  contentLabel = 'Connect Account via SnapTrade',
   style,
 }) => {
   const iframeRef = useRef(null);
 
-  const getTimeStampInSeconds = () => Math.floor(Date.now() / 1000).toString();
+  const successCallbackRef = useRef<VoidFunction | undefined>(onSuccess);
+  const errorCallbackRef = useRef<((errorMessage: string) => void) | undefined>(
+    onError
+  );
+  const abortCallbackRef = useRef<VoidFunction | undefined>(onExit);
 
-  window.addEventListener(
-    'message',
-    function (e) {
+  useLayoutEffect(() => {
+    successCallbackRef.current = onSuccess;
+    errorCallbackRef.current = onError;
+    abortCallbackRef.current = onExit;
+  });
+
+  useEffect(() => {
+    const handleMessageEvent = (e: MessageEvent<unknown>) => {
+      const successCallback = successCallbackRef.current;
+      const errorCallback = errorCallbackRef.current;
+      const abortCallback = abortCallbackRef.current;
+
       if (typeof e.data === 'string') {
-        if (e.data === 'SUCCESS' && onSuccess && onError) {
-          onSuccess();
+        if (e.data === 'SUCCESS' && successCallback && errorCallback) {
+          successCallback();
           localStorage.setItem('timestamp', getTimeStampInSeconds());
         }
-        if (e.data.includes('ERROR') && onError) {
-          onError(e.data.split(':')[1]);
+
+        if (e.data.includes('ERROR') && errorCallback) {
+          errorCallback(e.data.split(':')[1]);
           localStorage.setItem('timestamp', getTimeStampInSeconds());
         }
-        if (e.data === 'CLOSED' && onExit) {
+
+        if (e.data === 'CLOSED' && abortCallback) {
           if (localStorage.getItem('timestamp')) {
             const diffTimeStamp =
               Number(getTimeStampInSeconds()) -
               Number(localStorage.getItem('timestamp'));
-            console.log('diffTimeStamp', diffTimeStamp);
 
             if (diffTimeStamp > 5) {
-              onExit();
+              abortCallback();
               localStorage.setItem('timestamp', getTimeStampInSeconds());
             }
           } else {
-            onExit();
+            abortCallback();
             localStorage.setItem('timestamp', getTimeStampInSeconds());
           }
         }
       }
-    },
-    false
-  );
+    };
+    window.addEventListener('message', handleMessageEvent, false);
+    return () => {
+      window.removeEventListener('message', handleMessageEvent, false);
+    };
+  }, []);
 
   return (
     <div>
@@ -86,16 +109,21 @@ export const SnapTradeReact: React.FC<PropsType> = ({
             backgroundColor:
               style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
             width: style?.overlay?.width ?? '100%',
+            height: isMobile ? '100%' : style?.overlay?.height ?? 'auto',
+            zIndex: style?.overlay?.zIndex ?? 1,
           },
           content: {
             backgroundColor: style?.content?.backgroundColor ?? '#f8fafc',
             margin: style?.content?.margin ?? '0 auto',
-            width: style?.content?.width ?? '500px',
-            padding: style?.content?.padding ?? '20px 20px',
             borderRadius: style?.content?.borderRadius ?? '1rem',
             border:
               style?.content?.border ?? '1px solid rgba(255, 255, 255, 0.75)',
             textAlign: 'center',
+            overflow: 'auto',
+            inset: isMobile ? 'unset' : '40px',
+            padding: isMobile ? '0px' : style?.content?.padding ?? '20px 20px',
+            width: isMobile ? '100%' : style?.content?.width ?? '500px',
+            height: isMobile ? '100%' : style?.content?.height ?? 'auto',
           },
         }}
         contentLabel={contentLabel}
@@ -108,9 +136,11 @@ export const SnapTradeReact: React.FC<PropsType> = ({
               background: 'none',
               border: 'none',
               fontSize: '30px',
-              float: 'right',
+              float: isMobile ? 'left' : 'right',
               cursor: 'pointer',
               marginBottom: '20px',
+              position: 'sticky',
+              margin: '20px 10px',
             }}
             data-testid="closeBtn"
           >
@@ -122,13 +152,14 @@ export const SnapTradeReact: React.FC<PropsType> = ({
           id="snaptrade-react-connection-portal"
           src={loginLink}
           ref={iframeRef}
-          title="SnapTrade Connection Portal - React"
+          title={contentLabel}
           style={{
             inset: '0px',
             zIndex: '1000',
             borderWidth: '0px',
             display: 'block',
-            overflow: 'hidden auto',
+            overflow: 'auto',
+            height: '100%',
           }}
           height="1000vh"
           width="100%"
