@@ -63,7 +63,7 @@ export const SnapTradeReact: React.FC<PropsType> = ({
       const errorCallback = errorCallbackRef.current;
       const abortCallback = abortCallbackRef.current;
 
-      if (typeof e.data === 'string') {
+      if (typeof e.data === 'string' && e.origin === 'https://app.passiv.com') {
         if (e.data === 'SUCCESS' && successCallback && errorCallback) {
           successCallback();
           localStorage.setItem('timestamp', getTimeStampInSeconds());
