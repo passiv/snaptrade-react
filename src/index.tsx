@@ -1,6 +1,7 @@
+import { ConfigProvider, Modal } from 'antd';
 import { useEffect, useLayoutEffect, useRef } from 'react';
-import ReactModal from 'react-modal';
 import { isMobile } from 'react-device-detect';
+import { LegacySupport } from './legacySupport';
 
 type PropsType = {
   loginLink: string;
@@ -57,13 +58,23 @@ export const SnapTradeReact: React.FC<PropsType> = ({
     abortCallbackRef.current = onExit;
   });
 
+  // check to see if the login link is for the new app or the legacy app (to be removed after launching the new app)
+  const isNewApp =
+    loginLink?.split('.')[1]?.toLowerCase() === 'snaptrade' ||
+    loginLink?.split('.')[2]?.toLowerCase() === 'snaptrade';
+
   useEffect(() => {
     const handleMessageEvent = (e: MessageEvent<unknown>) => {
       const successCallback = successCallbackRef.current;
       const errorCallback = errorCallbackRef.current;
       const abortCallback = abortCallbackRef.current;
 
-      if (typeof e.data === 'string' && e.origin === 'https://app.passiv.com') {
+      if (
+        typeof e.data === 'string' &&
+        (e.origin === 'https://app.passiv.com' ||
+          e.origin === 'https://app.snaptrade.com' ||
+          e.origin === 'https://connect.snaptrade.com')
+      ) {
         if (e.data === 'SUCCESS' && successCallback && errorCallback) {
           successCallback();
           localStorage.setItem('timestamp', getTimeStampInSeconds());
@@ -97,75 +108,65 @@ export const SnapTradeReact: React.FC<PropsType> = ({
     };
   }, []);
 
+  const cancelled = () => {
+    close();
+    onExit && onExit();
+  };
+
+  const height = isMobile ? '710px' : '570px';
+
   return (
     <div>
-      <ReactModal
-        isOpen={isOpen}
-        aria-labelledby="dialog1Title"
-        aria-describedby="dialog1Desc"
-        ariaHideApp={false}
-        style={{
-          overlay: {
-            backgroundColor:
-              style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
-            width: style?.overlay?.width ?? '100%',
-            height: isMobile ? '100%' : style?.overlay?.height ?? 'auto',
-            zIndex: style?.overlay?.zIndex ?? 1,
-          },
-          content: {
-            backgroundColor: style?.content?.backgroundColor ?? '#f8fafc',
-            margin: style?.content?.margin ?? '0 auto',
-            borderRadius: style?.content?.borderRadius ?? '1rem',
-            border:
-              style?.content?.border ?? '1px solid rgba(255, 255, 255, 0.75)',
-            textAlign: 'center',
-            overflow: 'auto',
-            inset: isMobile ? 'unset' : '40px',
-            padding: isMobile ? '0px' : style?.content?.padding ?? '20px 20px',
-            width: isMobile ? '100%' : style?.content?.width ?? '500px',
-            height: isMobile ? '100%' : style?.content?.height ?? 'auto',
-          },
-        }}
-        contentLabel={contentLabel}
-      >
-        {closeBtn && (
-          <button
-            className="close-button"
-            onClick={close}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '30px',
-              float: isMobile ? 'left' : 'right',
-              cursor: 'pointer',
-              marginBottom: '20px',
-              position: 'sticky',
-              margin: '20px 10px',
-            }}
-            data-testid="closeBtn"
-          >
-            <span aria-hidden>×</span>
-          </button>
-        )}
-
-        <iframe
-          id="snaptrade-react-connection-portal"
-          src={loginLink}
-          ref={iframeRef}
-          title={contentLabel}
-          style={{
-            inset: '0px',
-            zIndex: '1000',
-            borderWidth: '0px',
-            display: 'block',
-            overflow: 'auto',
-            height: '100%',
+      {isNewApp ? (
+        <ConfigProvider
+          theme={{
+            token: {
+              paddingContentHorizontalLG: 0,
+              padding: 10,
+            },
           }}
-          height="1000vh"
-          width="100%"
-          allowFullScreen
-        ></iframe>
-      </ReactModal>
+        >
+          <Modal
+            open={isOpen}
+            closable={true}
+            centered
+            maskStyle={{
+              backgroundColor:
+                style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
+            }}
+            footer={null}
+            onCancel={cancelled}
+          >
+            <iframe
+              id="snaptrade-react-connection-portal"
+              src={loginLink}
+              ref={iframeRef}
+              title={contentLabel}
+              style={{
+                inset: '0px',
+                zIndex: '1000',
+                borderWidth: '0px',
+                display: 'block',
+                overflow: 'auto',
+                height: height,
+                width: '100%',
+              }}
+              allowFullScreen
+            ></iframe>
+          </Modal>
+        </ConfigProvider>
+      ) : (
+        <LegacySupport
+          {...{
+            loginLink,
+            isOpen,
+            close,
+            closeBtn,
+            contentLabel,
+            style,
+          }}
+        />
+      )}
     </div>
   );
 };
