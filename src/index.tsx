@@ -113,7 +113,7 @@ export const SnapTradeReact: React.FC<PropsType> = ({
     onExit && onExit();
   };
 
-  const height = isMobile ? '710px' : '570px';
+  const height = isMobile ? '710px' : '600px';
 
   return (
     <div>
@@ -130,12 +130,13 @@ export const SnapTradeReact: React.FC<PropsType> = ({
             open={isOpen}
             closable={true}
             centered
+            footer={null}
+            onCancel={cancelled}
             maskStyle={{
               backgroundColor:
                 style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
             }}
-            footer={null}
-            onCancel={cancelled}
+            zIndex={style?.overlay?.zIndex}
           >
             <iframe
               id="snaptrade-react-connection-portal"
@@ -148,7 +149,7 @@ export const SnapTradeReact: React.FC<PropsType> = ({
                 borderWidth: '0px',
                 display: 'block',
                 overflow: 'auto',
-                height: height,
+                height,
                 width: '100%',
               }}
               allowFullScreen

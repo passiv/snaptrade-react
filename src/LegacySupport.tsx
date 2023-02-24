@@ -42,6 +42,7 @@ export const LegacySupport: React.FC<PropsType> = ({
   return (
     <ReactModal
       isOpen={isOpen}
+      onRequestClose={close}
       aria-labelledby="dialog1Title"
       aria-describedby="dialog1Desc"
       ariaHideApp={false}
