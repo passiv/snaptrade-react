@@ -6,8 +6,8 @@ type PropsType = {
   loginLink: string;
   isOpen: boolean;
   close: () => void;
-  onSuccess?: (authorizationId: string) => void;
-  onError?: (error: string) => void;
+  onSuccess?: (data: string) => void;
+  onError?: (data: ErrorData) => void;
   onExit?: () => void;
   contentLabel?: string;
   style?: {
@@ -16,6 +16,18 @@ type PropsType = {
       zIndex?: number;
     };
   };
+};
+
+type Data = {
+  status: 'SUCCESS' | 'ERROR';
+  authorizationId?: string;
+  statusCode?: string;
+  detail?: string;
+};
+
+type ErrorData = {
+  statusCode: string;
+  detail: string;
 };
 
 const getTimeStampInSeconds = () => Math.floor(Date.now() / 1000).toString();
@@ -32,10 +44,10 @@ export const SnapTradeReact: React.FC<PropsType> = ({
 }) => {
   const iframeRef = useRef(null);
 
-  const successCallbackRef = useRef<
-    ((authorizationId: string) => void) | undefined
-  >(onSuccess);
-  const errorCallbackRef = useRef<((errorMessage: string) => void) | undefined>(
+  const successCallbackRef = useRef<((data: string) => void) | undefined>(
+    onSuccess
+  );
+  const errorCallbackRef = useRef<((data: ErrorData) => void) | undefined>(
     onError
   );
   const abortCallbackRef = useRef<VoidFunction | undefined>(onExit);
@@ -53,17 +65,21 @@ export const SnapTradeReact: React.FC<PropsType> = ({
       const abortCallback = abortCallbackRef.current;
 
       if (
-        typeof e.data === 'string' &&
+        e.data &&
         (e.origin === 'https://app.snaptrade.com' ||
           e.origin === 'https://connect.snaptrade.com')
       ) {
-        if (e.data.includes('SUCCESS') && successCallback && errorCallback) {
-          successCallback(e.data.split(':')[1]);
+        const data = e.data as Data;
+        if (data.status === 'SUCCESS' && successCallback && errorCallback) {
+          data.authorizationId
+            ? successCallback(data.authorizationId)
+            : successCallback('SUCCESS');
           localStorage.setItem('timestamp', getTimeStampInSeconds());
         }
 
-        if (e.data.includes('ERROR') && errorCallback) {
-          errorCallback(e.data.split(':')[1]);
+        if (data.status === 'ERROR' && errorCallback) {
+          const { status, ...rest } = data;
+          errorCallback(rest as ErrorData);
           localStorage.setItem('timestamp', getTimeStampInSeconds());
         }
 
