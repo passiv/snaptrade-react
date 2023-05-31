@@ -68,6 +68,7 @@ export const SnapTradeReact: React.FC<PropsType> = ({
       if (
         e.data &&
         (e.origin === 'https://app.snaptrade.com' ||
+          e.origin === 'https://app.staging.snaptrade.com' ||
           e.origin === 'https://connect.snaptrade.com')
       ) {
         const data = e.data as Data;
