@@ -26,6 +26,7 @@ type Data = {
 };
 
 type ErrorData = {
+  errorCode?: string;
   statusCode: string;
   detail: string;
 };
