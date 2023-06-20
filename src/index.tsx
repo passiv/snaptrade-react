@@ -113,6 +113,11 @@ export const SnapTradeReact: React.FC<PropsType> = ({
 
   const cancelled = () => {
     close();
+    const iframeElement = document.getElementById(
+      'snaptrade-react-connection-portal'
+    ) as HTMLIFrameElement | null;
+    const iframeWindow = iframeElement?.contentWindow;
+    iframeWindow?.postMessage('CANCELLED', '*');
     onExit && onExit();
   };
 
