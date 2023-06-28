@@ -65,12 +65,14 @@ export const SnapTradeReact: React.FC<PropsType> = ({
       const errorCallback = errorCallbackRef.current;
       const abortCallback = abortCallbackRef.current;
 
-      if (
-        e.data &&
-        (e.origin === 'https://app.snaptrade.com' ||
-          e.origin === 'https://app.staging.snaptrade.com' ||
-          e.origin === 'https://connect.snaptrade.com')
-      ) {
+      const allowedOrigins = [
+        'https://app.snaptrade.com',
+        'https://app.staging.snaptrade.com',
+        'https://app.local.snaptrade.com',
+        'https://connect.snaptrade.com',
+      ];
+
+      if (e.data && allowedOrigins.includes(e.origin)) {
         const data = e.data as Data;
         if (data.status === 'SUCCESS' && successCallback && errorCallback) {
           data.authorizationId
