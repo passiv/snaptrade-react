@@ -5,6 +5,7 @@ import { isMobile } from 'react-device-detect';
 type PropsType = {
   loginLink: string;
   isOpen: boolean;
+  closeOnOverlayClick?: boolean;
   close: () => void;
   onSuccess?: (data: string) => void;
   onError?: (data: ErrorData) => void;
@@ -36,6 +37,7 @@ const getTimeStampInSeconds = () => Math.floor(Date.now() / 1000).toString();
 export const SnapTradeReact: React.FC<PropsType> = ({
   loginLink,
   isOpen,
+  closeOnOverlayClick = true,
   close,
   onSuccess,
   onError,
@@ -70,6 +72,7 @@ export const SnapTradeReact: React.FC<PropsType> = ({
         'https://app.staging.snaptrade.com',
         'https://app.local.snaptrade.com',
         'https://connect.snaptrade.com',
+        'http://localhost:5173',
       ];
 
       if (e.data && allowedOrigins.includes(e.origin)) {
@@ -115,12 +118,15 @@ export const SnapTradeReact: React.FC<PropsType> = ({
 
   const cancelled = () => {
     close();
+    onExit && onExit();
+  };
+
+  const handleCancelButtonClick = () => {
     const iframeElement = document.getElementById(
       'snaptrade-react-connection-portal'
     ) as HTMLIFrameElement | null;
     const iframeWindow = iframeElement?.contentWindow;
     iframeWindow?.postMessage('CANCELLED', '*');
-    onExit && onExit();
   };
 
   const height = isMobile ? '710px' : '600px';
@@ -140,7 +146,8 @@ export const SnapTradeReact: React.FC<PropsType> = ({
           closable={true}
           centered
           footer={null}
-          onCancel={cancelled}
+          onCancel={handleCancelButtonClick}
+          maskClosable={closeOnOverlayClick}
           maskStyle={{
             backgroundColor:
               style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
@@ -152,6 +159,7 @@ export const SnapTradeReact: React.FC<PropsType> = ({
             width: '100%',
           }}
           zIndex={style?.overlay?.zIndex}
+          destroyOnClose={true}
         >
           <iframe
             id="snaptrade-react-connection-portal"
