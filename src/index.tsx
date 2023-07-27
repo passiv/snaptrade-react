@@ -1,5 +1,5 @@
-import { ConfigProvider, Modal, Result } from 'antd';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Modal } from 'antd';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { isMobile } from 'react-device-detect';
 
 type PropsType = {
@@ -45,8 +45,6 @@ export const SnapTradeReact: React.FC<PropsType> = ({
   contentLabel = 'Connect Account via SnapTrade',
   style,
 }) => {
-  const [isThirdPartyCookiesBlocked, setIsThirdPartyCookiesBlocked] =
-    useState(false);
   const iframeRef = useRef(null);
 
   const successCallbackRef = useRef<((data: string) => void) | undefined>(
@@ -64,25 +62,6 @@ export const SnapTradeReact: React.FC<PropsType> = ({
   });
 
   useEffect(() => {
-    const setSessionStorage = (name: string, value: string) => {
-      sessionStorage.setItem(name, value);
-    };
-
-    const testSessionName = 'sdk_test_session';
-    setSessionStorage(testSessionName, 'test');
-
-    const isThirdPartySessionBlocked =
-      sessionStorage.getItem(testSessionName) === null;
-
-    console.log('isThirdPartySessionBlocked', isThirdPartySessionBlocked);
-
-    if (isThirdPartySessionBlocked) {
-      setIsThirdPartyCookiesBlocked(true);
-    }
-
-    // Clean up the test session
-    sessionStorage.removeItem(testSessionName);
-
     const handleMessageEvent = (e: MessageEvent<unknown>) => {
       const successCallback = successCallbackRef.current;
       const errorCallback = errorCallbackRef.current;
@@ -150,128 +129,47 @@ export const SnapTradeReact: React.FC<PropsType> = ({
     iframeWindow?.postMessage('CANCELLED', '*');
   };
 
-  const height = isMobile ? '710px' : '600px';
+  const height = isMobile ? '710px' : '813px';
 
   return (
     <div>
-      <ConfigProvider
-        theme={{
-          token: {
-            paddingContentHorizontalLG: 0,
-            padding: 10,
-          },
+      <Modal
+        open={isOpen}
+        closable={true}
+        centered
+        footer={null}
+        onCancel={handleCancelButtonClick}
+        maskClosable={closeOnOverlayClick}
+        maskStyle={{
+          backgroundColor:
+            style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
         }}
+        bodyStyle={{
+          width: '100%',
+        }}
+        style={{
+          width: '100%',
+        }}
+        zIndex={style?.overlay?.zIndex}
+        destroyOnClose={true}
       >
-        <Modal
-          open={isOpen}
-          closable={true}
-          centered
-          footer={null}
-          onCancel={handleCancelButtonClick}
-          maskClosable={closeOnOverlayClick}
-          maskStyle={{
-            backgroundColor:
-              style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
-          }}
-          bodyStyle={{
-            width: '100%',
-          }}
+        <iframe
+          id="snaptrade-react-connection-portal"
+          src={loginLink}
+          ref={iframeRef}
+          title={contentLabel}
           style={{
+            inset: '0px',
+            zIndex: '1000',
+            borderWidth: '0px',
+            display: 'block',
+            overflow: 'auto',
             width: '100%',
+            height,
           }}
-          zIndex={style?.overlay?.zIndex}
-          destroyOnClose={true}
-        >
-          {isThirdPartyCookiesBlocked ? (
-            <Result
-              status="warning"
-              title="Important Information about Your Browser Settings"
-              subTitle={
-                <div>
-                  <div style={{ color: 'black', marginTop: '20px' }}>
-                    {' '}
-                    <p>
-                      The "Block third-party cookies" setting in your browser
-                      can impact our app's ability to load properly when
-                      embedded within another app. This setting restricts the
-                      use of cookies, including essential features that our app
-                      relies on.
-                    </p>
-                    <p>
-                      To ensure the best experience, please follow these steps
-                      to disable the <strong>Block third-party cookies</strong>{' '}
-                      setting:
-                    </p>
-                  </div>
-
-                  <ul>
-                    <li>
-                      <strong>Google Chrome:</strong> Go to{' '}
-                      <em>
-                        Settings {'>'} Privacy and Security {'>'} Cookies and
-                        other site data
-                      </em>
-                      . Disable the "Block third-party cookies" option.
-                    </li>
-                    <li>
-                      <strong>Mozilla Firefox:</strong> Go to{' '}
-                      <em>
-                        Preferences {'>'} Privacy & Security {'>'} Cookies and
-                        Site Data
-                      </em>
-                      . Uncheck the "Block cookies and site data from third
-                      parties" option.
-                    </li>
-                    <li>
-                      <strong>Microsoft Edge:</strong> Go to{' '}
-                      <em>
-                        Settings {'>'} Privacy, search, and services {'>'}{' '}
-                        Cookies and other site data
-                      </em>
-                      . Turn off the "Block third-party cookies" setting.
-                    </li>
-                    <li>
-                      <strong>Safari:</strong> Go to{' '}
-                      <em>
-                        Preferences {'>'} Privacy {'>'} Cookies and website data
-                      </em>
-                      . Uncheck the "Block all cookies" option.
-                    </li>
-                  </ul>
-
-                  <div style={{ color: 'black', marginTop: '20px' }}>
-                    <p>
-                      If you have any questions or need assistance, please reach
-                      out to our support team at{' '}
-                      <a href="mailto:support@snaptrade.com">
-                        support@example.com
-                      </a>{' '}
-                      .
-                    </p>
-                  </div>
-                </div>
-              }
-            />
-          ) : (
-            <iframe
-              id="snaptrade-react-connection-portal"
-              src={loginLink}
-              ref={iframeRef}
-              title={contentLabel}
-              style={{
-                inset: '0px',
-                zIndex: '1000',
-                borderWidth: '0px',
-                display: 'block',
-                overflow: 'auto',
-                height,
-                width: '100%',
-              }}
-              allowFullScreen
-            ></iframe>
-          )}
-        </Modal>
-      </ConfigProvider>
+          allowFullScreen
+        ></iframe>
+      </Modal>
     </div>
   );
 };
