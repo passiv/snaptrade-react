@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { ConfigProvider, Modal } from 'antd';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { isMobile } from 'react-device-detect';
 
@@ -129,47 +129,56 @@ export const SnapTradeReact: React.FC<PropsType> = ({
     iframeWindow?.postMessage('CANCELLED', '*');
   };
 
-  const height = isMobile ? '710px' : '813px';
+  const height = isMobile ? '710px' : '600px';
 
   return (
     <div>
-      <Modal
-        open={isOpen}
-        closable={true}
-        centered
-        footer={null}
-        onCancel={handleCancelButtonClick}
-        maskClosable={closeOnOverlayClick}
-        maskStyle={{
-          backgroundColor:
-            style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
+      <ConfigProvider
+        theme={{
+          token: {
+            paddingContentHorizontalLG: 0,
+            padding: 10,
+          },
         }}
-        bodyStyle={{
-          width: '100%',
-        }}
-        style={{
-          width: '100%',
-        }}
-        zIndex={style?.overlay?.zIndex}
-        destroyOnClose={true}
       >
-        <iframe
-          id="snaptrade-react-connection-portal"
-          src={loginLink}
-          ref={iframeRef}
-          title={contentLabel}
-          style={{
-            inset: '0px',
-            zIndex: '1000',
-            borderWidth: '0px',
-            display: 'block',
-            overflow: 'auto',
-            width: '100%',
-            height,
+        <Modal
+          open={isOpen}
+          closable={true}
+          centered
+          footer={null}
+          onCancel={handleCancelButtonClick}
+          maskClosable={closeOnOverlayClick}
+          maskStyle={{
+            backgroundColor:
+              style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
           }}
-          allowFullScreen
-        ></iframe>
-      </Modal>
+          bodyStyle={{
+            width: '100%',
+          }}
+          style={{
+            width: '100%',
+          }}
+          zIndex={style?.overlay?.zIndex}
+          destroyOnClose={true}
+        >
+          <iframe
+            id="snaptrade-react-connection-portal"
+            src={loginLink}
+            ref={iframeRef}
+            title={contentLabel}
+            style={{
+              inset: '0px',
+              zIndex: '1000',
+              borderWidth: '0px',
+              display: 'block',
+              overflow: 'auto',
+              height,
+              width: '100%',
+            }}
+            allowFullScreen
+          ></iframe>
+        </Modal>
+      </ConfigProvider>
     </div>
   );
 };
