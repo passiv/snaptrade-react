@@ -77,7 +77,16 @@ export const SnapTradeReact: React.FC<PropsType> = ({
 
       if (e.data && allowedOrigins.includes(e.origin)) {
         const data = e.data as Data;
+        console.log('data', e.data);
         if (data.status === 'SUCCESS' && successCallback && errorCallback) {
+          console.log(
+            'data.status is SUCCESS',
+            'DATA:',
+            data,
+            'AUTHORIZATION ID:',
+            data.authorizationId
+          );
+
           data.authorizationId
             ? successCallback(data.authorizationId)
             : successCallback('SUCCESS');
