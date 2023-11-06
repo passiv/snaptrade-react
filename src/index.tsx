@@ -1,6 +1,5 @@
-import { ConfigProvider, Modal } from 'antd';
+import { Modal } from 'antd';
 import { useEffect, useLayoutEffect, useRef } from 'react';
-import { isMobile } from 'react-device-detect';
 
 type PropsType = {
   loginLink: string;
@@ -24,6 +23,7 @@ type Data = {
   authorizationId?: string;
   statusCode?: string;
   detail?: string;
+  height?: string;
 };
 
 type ErrorData = {
@@ -75,8 +75,14 @@ export const SnapTradeReact: React.FC<PropsType> = ({
         'http://localhost:5173',
       ];
 
+      const iframe = document.getElementById(
+        'snaptrade-react-connection-portal'
+      );
       if (e.data && allowedOrigins.includes(e.origin)) {
         const data = e.data as Data;
+        if (iframe) {
+          iframe.style.height = `${data.height}px`;
+        }
         if (data.status === 'SUCCESS' && successCallback && errorCallback) {
           data.authorizationId
             ? successCallback(data.authorizationId)
@@ -114,52 +120,29 @@ export const SnapTradeReact: React.FC<PropsType> = ({
     return () => {
       window.removeEventListener('message', handleMessageEvent, false);
     };
-  }, []);
+  }, [isOpen]);
 
   const cancelled = () => {
     close();
     onExit && onExit();
   };
 
-  const handleCancelButtonClick = () => {
-    const iframeElement = document.getElementById(
-      'snaptrade-react-connection-portal'
-    ) as HTMLIFrameElement | null;
-    const iframeWindow = iframeElement?.contentWindow;
-    iframeWindow?.postMessage('CANCELLED', '*');
-  };
-
-  const height = isMobile ? '710px' : '600px';
-
   return (
     <div>
-      <ConfigProvider
-        theme={{
-          token: {
-            paddingContentHorizontalLG: 0,
-            padding: 10,
-          },
-        }}
-      >
+      <div>
         <Modal
           open={isOpen}
-          closable={true}
+          closable={false}
           centered
           footer={null}
-          onCancel={handleCancelButtonClick}
           maskClosable={closeOnOverlayClick}
           maskStyle={{
             backgroundColor:
               style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
           }}
-          bodyStyle={{
-            width: '100%',
-          }}
-          style={{
-            width: '100%',
-          }}
           zIndex={style?.overlay?.zIndex}
           destroyOnClose={true}
+          width={450}
         >
           <iframe
             id="snaptrade-react-connection-portal"
@@ -171,14 +154,14 @@ export const SnapTradeReact: React.FC<PropsType> = ({
               zIndex: '1000',
               borderWidth: '0px',
               display: 'block',
-              overflow: 'auto',
-              height,
+              overflow: 'none',
               width: '100%',
+              minHeight: '300px',
             }}
             allowFullScreen
           ></iframe>
         </Modal>
-      </ConfigProvider>
+      </div>
     </div>
   );
 };

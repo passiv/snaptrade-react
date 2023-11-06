@@ -17,8 +17,7 @@
     "postversion": "git push && git push --tags"
   },
   "dependencies": {
-    "antd": "5.2.0",
-    "react-device-detect": "2.2.2"
+    "antd": "5.2.0"
   },
   "peerDependencies": {
     "react": "16.8.0 || 17.0.0 || 18.0.0",
