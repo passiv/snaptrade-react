@@ -63,7 +63,8 @@ export const SnapTradeReact: React.FC<PropsType> = ({
   });
 
   const isV3 =
-    loginLink && new URL(loginLink).host === 'connect.snaptrade.com'
+    loginLink &&
+    new URL(loginLink).searchParams.get('connectionPortalVersion') === 'v3'
       ? true
       : false;
 
