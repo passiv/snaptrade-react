@@ -1,6 +1,7 @@
 import { Modal } from 'antd';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { SnapTradeV2Support } from './SnapTradeV2Support';
+import packageJson from '../package.json';
 
 type PropsType = {
   loginLink: string;
@@ -33,6 +34,7 @@ type ErrorData = {
   detail: string;
 };
 
+const REACT_SDK_VERSION = packageJson.version;
 const getTimeStampInSeconds = () => Math.floor(Date.now() / 1000).toString();
 
 export const SnapTradeReact: React.FC<PropsType> = ({
@@ -62,11 +64,16 @@ export const SnapTradeReact: React.FC<PropsType> = ({
     abortCallbackRef.current = onExit;
   });
 
+  const loginLinkURL = loginLink ? new URL(loginLink) : null;
+
+  loginLinkURL?.searchParams.append('reactSDK', REACT_SDK_VERSION);
+
   const isV3 =
-    loginLink &&
-    new URL(loginLink).searchParams.get('connectionPortalVersion') === 'v3'
+    loginLinkURL?.searchParams.get('connectionPortalVersion') === 'v3'
       ? true
       : false;
+
+  const modifiedLoginLink = loginLinkURL?.toString();
 
   useEffect(() => {
     const handleMessageEvent = (e: MessageEvent<unknown>) => {
@@ -153,7 +160,7 @@ export const SnapTradeReact: React.FC<PropsType> = ({
         >
           <iframe
             id="snaptrade-react-connection-portal"
-            src={loginLink}
+            src={modifiedLoginLink}
             ref={iframeRef}
             title={contentLabel}
             style={{
@@ -171,7 +178,7 @@ export const SnapTradeReact: React.FC<PropsType> = ({
       ) : (
         <SnapTradeV2Support
           {...{
-            loginLink,
+            loginLink: modifiedLoginLink ?? loginLink,
             isOpen,
             close,
             contentLabel,
