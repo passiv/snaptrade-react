@@ -1,6 +1,6 @@
 {
   "name": "snaptrade-react",
-  "version": "1.7.3",
+  "version": "3.0.0",
   "description": "A React component for SnapTrade connection portal.",
   "license": "ISC",
   "source": "src/index.tsx",
