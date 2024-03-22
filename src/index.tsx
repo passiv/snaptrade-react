@@ -1,7 +1,5 @@
 import { Modal } from 'antd';
 import { useEffect, useLayoutEffect, useRef } from 'react';
-import { SnapTradeV2Support } from './SnapTradeV2Support';
-import packageJson from '../package.json';
 
 type PropsType = {
   loginLink: string;
@@ -34,7 +32,13 @@ type ErrorData = {
   detail: string;
 };
 
-const REACT_SDK_VERSION = packageJson.version;
+declare const process: {
+  env: {
+    REACT_APP_VERSION: string;
+  };
+};
+
+const VERSION = process.env.REACT_APP_VERSION;
 const getTimeStampInSeconds = () => Math.floor(Date.now() / 1000).toString();
 
 export const SnapTradeReact: React.FC<PropsType> = ({
@@ -66,12 +70,7 @@ export const SnapTradeReact: React.FC<PropsType> = ({
 
   const loginLinkURL = loginLink ? new URL(loginLink) : null;
 
-  loginLinkURL?.searchParams.append('reactSDK', REACT_SDK_VERSION);
-
-  const isV3 =
-    loginLinkURL?.searchParams.get('connectionPortalVersion') === 'v3'
-      ? true
-      : false;
+  loginLinkURL?.searchParams.append('reactSDK', VERSION);
 
   const modifiedLoginLink = loginLinkURL?.toString();
 
@@ -89,14 +88,8 @@ export const SnapTradeReact: React.FC<PropsType> = ({
         'http://localhost:5173',
       ];
 
-      const iframe = document.getElementById(
-        'snaptrade-react-connection-portal'
-      );
       if (e.data && allowedOrigins.includes(e.origin)) {
         const data = e.data as Data;
-        if (iframe) {
-          iframe.style.height = `${data.height}px`;
-        }
         if (data.status === 'SUCCESS' && successCallback && errorCallback) {
           data.authorizationId
             ? successCallback(data.authorizationId)
@@ -143,49 +136,44 @@ export const SnapTradeReact: React.FC<PropsType> = ({
 
   return (
     <div>
-      {isV3 ? (
-        <Modal
-          open={isOpen}
-          closable={false}
-          centered
-          footer={null}
-          maskClosable={closeOnOverlayClick}
-          maskStyle={{
-            backgroundColor:
-              style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
+      <Modal
+        open={isOpen}
+        closable={false}
+        centered
+        footer={null}
+        maskClosable={closeOnOverlayClick}
+        maskStyle={{
+          backgroundColor:
+            style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
+        }}
+        zIndex={style?.overlay?.zIndex}
+        destroyOnClose={true}
+        width={450}
+        bodyStyle={{
+          height: '600px',
+          overflow: 'scroll',
+          position: 'relative',
+          overflowX: 'hidden',
+          overflowY: 'auto',
+        }}
+      >
+        <iframe
+          id="snaptrade-react-connection-portal"
+          src={modifiedLoginLink}
+          ref={iframeRef}
+          title={contentLabel}
+          style={{
+            inset: '0px',
+            zIndex: '1000',
+            borderWidth: '0px',
+            display: 'block',
+            overflow: 'none',
+            width: '100%',
+            minHeight: '600px',
           }}
-          zIndex={style?.overlay?.zIndex}
-          destroyOnClose={true}
-          width={450}
-        >
-          <iframe
-            id="snaptrade-react-connection-portal"
-            src={modifiedLoginLink}
-            ref={iframeRef}
-            title={contentLabel}
-            style={{
-              inset: '0px',
-              zIndex: '1000',
-              borderWidth: '0px',
-              display: 'block',
-              overflow: 'none',
-              width: '100%',
-              minHeight: '300px',
-            }}
-            allowFullScreen
-          ></iframe>
-        </Modal>
-      ) : (
-        <SnapTradeV2Support
-          {...{
-            loginLink: modifiedLoginLink ?? loginLink,
-            isOpen,
-            close,
-            contentLabel,
-            style,
-          }}
-        />
-      )}
+          allowFullScreen
+        ></iframe>
+      </Modal>
     </div>
   );
 };
