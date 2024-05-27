@@ -1,9 +1,9 @@
 {
   "name": "snaptrade-react",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "description": "A React component for SnapTrade connection portal.",
   "license": "ISC",
-  "source": "src/index.tsx",
+  "source": "src/index.ts",
   "main": "dist/main.js",
   "types": "dist/types.d.ts",
   "module": "dist/module.js",
@@ -11,7 +11,7 @@
     "/dist"
   ],
   "scripts": {
-    "build": "REACT_APP_VERSION=$(node -p \"require('./package.json').version\") parcel build --no-cache",
+    "build": "REACT_APP_VERSION=$(node -p \"require('./package.json').version\") parcel build src/index.ts --no-cache",
     "version": "git add -A src",
     "postversion": "git push && git push --tags"
   },
