@@ -14,6 +14,7 @@
 
 - [🚀 Getting Started](#-getting-started)
 - [⚙️ Configuration](#%EF%B8%8F-configuration)
+- [📚 Using the useWindowMessage Hook](#-using-the-usewindowmessage-hook)
 - [👨🏼‍⚖️ License & copyrights](#%EF%B8%8F-license)
 
 ## 🚀 Getting Started
@@ -63,18 +64,58 @@ export default ConnectBrokerage;
 
 `*: optional `
 
-| Prop                | Type                                                  | Default value                                                         | Description                                                                                                                                                                                                                           |
-| ------------------- | ----------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| loginLink           | `string`                                              | `undefined`                                                           | The generated redirect link. (retrieve by calling `https://api.snaptrade.com/api/v1/snapTrade/login`)                                                                                                                                 |
-| isOpen              | `boolean`                                             | `undefined`                                                           | Determines to show/hide the modal.                                                                                                                                                                                                    |
-| close               | `Function`                                            | `undefined`                                                           | A function to be called when user clicks out of the modal or click the `X` button.                                                                                                                                                    |
-| closeOnOverlayClick | `boolean`                                             | true                                                                  | Whether to close the modal when the mask (area outside the modal) is clicked.                                                                                                                                                         |
-| onSuccess\*         | `Function `                                           | `undefined`                                                           | A callback function that is executed upon successful connection to a brokerage. This function returns the authorization ID associated with the new connection.                                                                        |
-| onError\*           | `Function`                                            | `undefined`                                                           | A callback function that is triggered when a user encounters an error while attempting to connect to a brokerage. This function returns an object containing both an error code, status code and a detailed description of the error. |
-| onExit\*            | `Function`                                            | `undefined`                                                           | A callback function that is triggered when a user closes the modal or exits the second tab (opened for making an oAuth connection) without successfully connecting to a brokerage.                                                    |
-|                     |
-| contentLabel\*      | `string`                                              | `Connect Account via SnapTrade`                                       | Indicating how the content container should be announced to screenreaders.                                                                                                                                                            |
-| style\*             | `overlay: { backgroundColor: string, zIndex: number}` | `overlay: { backgroundColor: 'rgba(255, 255, 255, 0.75)', zIndex: 1}` | Change styling for the overlay.                                                                                                                                                                                                       |
+| Prop           | Type                                                  | Default value                                                         | Description                                                                                                                                                                                                                           |
+| -------------- | ----------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| loginLink      | `string`                                              | `undefined`                                                           | The generated redirect link. (retrieve by calling `https://api.snaptrade.com/api/v1/snapTrade/login`)                                                                                                                                 |
+| isOpen         | `boolean`                                             | `undefined`                                                           | Determines to show/hide the modal.                                                                                                                                                                                                    |
+| close          | `Function`                                            | `undefined`                                                           | A function to be called when user clicks out of the modal or click the `X` button.                                                                                                                                                    |
+| onSuccess\*    | `Function `                                           | `undefined`                                                           | A callback function that is executed upon successful connection to a brokerage. This function returns the authorization ID associated with the new connection.                                                                        |
+| onError\*      | `Function`                                            | `undefined`                                                           | A callback function that is triggered when a user encounters an error while attempting to connect to a brokerage. This function returns an object containing both an error code, status code and a detailed description of the error. |
+| onExit\*       | `Function`                                            | `undefined`                                                           | A callback function that is triggered when a user closes the modal or exits the second tab (opened for making an oAuth connection) without successfully connecting to a brokerage.                                                    |
+|                |
+| contentLabel\* | `string`                                              | `Connect Account via SnapTrade`                                       | Indicating how the content container should be announced to screenreaders.                                                                                                                                                            |
+| style\*        | `overlay: { backgroundColor: string, zIndex: number}` | `overlay: { backgroundColor: 'rgba(255, 255, 255, 0.75)', zIndex: 1}` | Change styling for the overlay.                                                                                                                                                                                                       |
+
+## 📚 Using the useWindowMessage Hook
+
+The `useWindowMessage` hook can be used to listen for window messages and handle success, error, exit, and close modal events. Here’s how to use it:
+
+```
+import { useEffect } from 'react';
+import { useWindowMessage } from 'snaptrade-react/hooks';
+
+const MyComponent = () => {
+  const onSuccess = (data) => {
+    console.log('Success:', data);
+  };
+
+  const onError = (data) => {
+    console.error('Error:', data);
+  };
+
+  const onExit = () => {
+    console.log('Exit');
+  };
+
+  const close = () => {
+    console.log('Close');
+  };
+
+  useWindowMessage({
+    handleSuccess: onSuccess,
+    handleError: onError,
+    handleExit: onExit,
+    close: close,
+  });
+
+  return <div>My Component</div>;
+};
+
+export default MyComponent;
+
+```
+
+This hook handles the SUCCESS, ERROR, CLOSED, and CLOSE_MODAL events and triggers the corresponding callbacks.
 
 <br>
 <br>
