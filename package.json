@@ -3,15 +3,25 @@
   "version": "3.2.0",
   "description": "A React component for SnapTrade connection portal.",
   "license": "ISC",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
   "source": "src/index.ts",
-  "main": "dist/main.js",
   "types": "dist/types.d.ts",
-  "module": "dist/module.js",
   "files": [
     "/dist"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js"
+    },
+    "./hooks/useWindowMessage": {
+      "import": "./dist/hooks/useWindowMessage.esm.js",
+      "require": "./dist/hooks/useWindowMessage.js"
+    }
+  },
   "scripts": {
-    "build": "REACT_APP_VERSION=$(node -p \"require('./package.json').version\") parcel build src/index.ts --no-cache",
+    "build": "REACT_APP_VERSION=$(node -p \"require('./package.json').version\") tsc && parcel build src/index.ts --dist-dir dist --no-cache",
     "version": "git add -A src",
     "postversion": "git push && git push --tags"
   },

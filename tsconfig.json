@@ -1,22 +1,18 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
-    "module": "ESNext",
-    "target": "ES5",
-    "lib": ["ES6", "DOM", "ES2016", "ES2017"],
-    "jsx": "react-jsx",
+    "outDir": "./dist",
+    "rootDir": "./src",
     "declaration": true,
-    "moduleResolution": "Node",
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false, // Ensure this is set to false to emit JavaScript files
+    "moduleResolution": "node",
+    "target": "ES6",
+    "module": "ESNext",
+    "jsx": "react",
+    "strict": true,
     "esModuleInterop": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "rootDir": "src"
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
