@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { ErrorData } from '../types/ErrorData';
 
 type Data = {
   status: 'SUCCESS' | 'ERROR';
@@ -6,12 +7,6 @@ type Data = {
   statusCode?: string;
   detail?: string;
   height?: string;
-};
-
-type ErrorData = {
-  errorCode?: string;
-  statusCode: string;
-  detail: string;
 };
 
 const getTimeStampInSeconds = () => Math.floor(Date.now() / 1000).toString();

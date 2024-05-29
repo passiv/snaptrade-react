@@ -1,27 +1,37 @@
 {
   "name": "snaptrade-react",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "A React component for SnapTrade connection portal.",
   "license": "ISC",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
   "source": "src/index.ts",
-  "types": "dist/types.d.ts",
-  "files": [
-    "/dist"
-  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.esm.js",
   "exports": {
     ".": {
       "import": "./dist/index.esm.js",
-      "require": "./dist/index.js"
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     },
     "./hooks/useWindowMessage": {
-      "import": "./dist/hooks/useWindowMessage.esm.js",
-      "require": "./dist/hooks/useWindowMessage.js"
+      "import": "./dist/hooks/useWindowMessage.js",
+      "require": "./dist/hooks/useWindowMessage.js",
+      "types": "./dist/hooks/useWindowMessage.d.ts"
+    },
+    "./components/SnapTradeReact": {
+      "import": "./dist/components/SnapTradeReact.js",
+      "require": "./dist/components/SnapTradeReact.js",
+      "types": "./dist/components/SnapTradeReact.d.ts"
+    },
+    "./types/ErrorData": {
+      "types": "./dist/types/ErrorData.d.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "REACT_APP_VERSION=$(node -p \"require('./package.json').version\") tsc && parcel build src/index.ts --dist-dir dist --no-cache",
+    "build": "tsc && parcel build src/index.ts --dist-dir dist --no-cache",
     "version": "git add -A src",
     "postversion": "git push && git push --tags"
   },

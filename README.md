@@ -82,7 +82,7 @@ The `useWindowMessage` hook can be used to listen for window messages and handle
 
 ```
 import { useEffect } from 'react';
-import { useWindowMessage } from 'snaptrade-react/hooks';
+import { useWindowMessage } from 'snaptrade-react/hooks/useWindowMessage';
 
 const MyComponent = () => {
   const onSuccess = (data) => {

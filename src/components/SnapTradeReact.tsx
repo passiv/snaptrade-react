@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal } from 'antd';
 import { useRef } from 'react';
 import { useWindowMessage } from '../hooks/useWindowMessage';
+import { ErrorData } from '../types/ErrorData';
 
 type PropsType = {
   loginLink: string;
@@ -19,21 +20,9 @@ type PropsType = {
   };
 };
 
-type ErrorData = {
-  errorCode?: string;
-  statusCode: string;
-  detail: string;
-};
+const VERSION = '3.2.0';
 
-declare const process: {
-  env: {
-    REACT_APP_VERSION: string;
-  };
-};
-
-const VERSION = process.env.REACT_APP_VERSION;
-
-export const SnapTradeReact: React.FC<PropsType> = ({
+const SnapTradeReact: React.FC<PropsType> = ({
   loginLink,
   isOpen,
   close,
@@ -98,3 +87,4 @@ export const SnapTradeReact: React.FC<PropsType> = ({
     </div>
   );
 };
+export default SnapTradeReact;
