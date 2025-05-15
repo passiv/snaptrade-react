@@ -1,6 +1,6 @@
 {
   "name": "snaptrade-react",
-  "version": "3.2.1",
+  "version": "4.0.0-beat.1",
   "description": "A React component for SnapTrade connection portal.",
   "license": "ISC",
   "source": "src/index.ts",
@@ -40,8 +40,8 @@
     "react-device-detect": "^2.2.3"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0"
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
     "@babel/preset-env": "7.18.10",
@@ -49,8 +49,8 @@
     "@parcel/packager-ts": "2.9.3",
     "@parcel/transformer-typescript-types": "2.9.3",
     "@types/node": "^20.11.30",
-    "@types/react": "18.2.24",
-    "@types/react-dom": "18.2.9",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.0",
     "parcel": "2.9.3",
     "typescript": "4.7.4"
   },
