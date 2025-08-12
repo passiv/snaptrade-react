@@ -52,19 +52,21 @@ const SnapTradeReact: React.FC<PropsType> = ({
         closable={false}
         centered
         footer={null}
-        maskStyle={{
-          backgroundColor:
-            style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
-        }}
         zIndex={style?.overlay?.zIndex}
-        destroyOnClose={true}
+        destroyOnHidden={true}
         width={450}
-        bodyStyle={{
-          height: '600px',
-          overflow: 'scroll',
-          position: 'relative',
-          overflowX: 'hidden',
-          overflowY: 'auto',
+        styles={{
+          mask: {
+            backgroundColor:
+              style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
+          },
+          body: {
+            height: '600px',
+            overflow: 'scroll',
+            position: 'relative',
+            overflowX: 'hidden',
+            overflowY: 'auto',
+          },
         }}
       >
         <iframe

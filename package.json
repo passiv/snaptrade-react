@@ -1,6 +1,6 @@
 {
   "name": "snaptrade-react",
-  "version": "3.2.2",
+  "version": "3.2.4",
   "description": "A React component for SnapTrade connection portal.",
   "license": "ISC",
   "source": "src/index.ts",
@@ -36,7 +36,7 @@
     "postversion": "git push && git push --tags"
   },
   "dependencies": {
-    "antd": "5.2.0",
+    "antd": "5.27.0",
     "react-device-detect": "^2.2.3"
   },
   "peerDependencies": {
