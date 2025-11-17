@@ -20,7 +20,7 @@ type PropsType = {
   };
 };
 
-const VERSION = '3.2.0';
+const VERSION = '3.2.5';
 
 const SnapTradeReact: React.FC<PropsType> = ({
   loginLink,
@@ -41,9 +41,13 @@ const SnapTradeReact: React.FC<PropsType> = ({
     close: close,
   });
 
-  const loginLinkURL = loginLink ? new URL(loginLink) : null;
-  loginLinkURL?.searchParams.append('reactSDK', VERSION);
-  const modifiedLoginLink = loginLinkURL?.toString();
+  const url = loginLink ? new URL(loginLink) : null;
+  const searchParams = url?.searchParams;
+  const isDarkMode =
+    searchParams?.has('darkMode') && searchParams.get('darkMode') === 'true';
+
+  url?.searchParams.append('reactSDK', VERSION);
+  const modifiedLoginLink = url?.toString();
 
   return (
     <div>
@@ -58,7 +62,10 @@ const SnapTradeReact: React.FC<PropsType> = ({
         styles={{
           mask: {
             backgroundColor:
-              style?.overlay?.backgroundColor ?? 'rgba(255, 255, 255, 0.75)',
+              style?.overlay?.backgroundColor ??
+              (isDarkMode
+                ? 'rgba(0, 0, 0, 0.75)'
+                : 'rgba(255, 255, 255, 0.75)'),
           },
           body: {
             height: '600px',
@@ -67,6 +74,11 @@ const SnapTradeReact: React.FC<PropsType> = ({
             overflowX: 'hidden',
             overflowY: 'auto',
           },
+          content: isDarkMode
+            ? {
+                backgroundColor: '#0a0a0a',
+              }
+            : undefined,
         }}
       >
         <iframe
